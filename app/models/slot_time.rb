@@ -6,13 +6,13 @@ class SlotTime < ApplicationRecord
 
   def validate_start_time
     if !start_time.blank?
-      errors[:base] << 'The Start Date can not be in the past.' if start_at < Time.current
+      errors[:base] << 'Start Date can not be in the past.' if start_time < Time.current
     end
   end
 
   def validate_end_time
     if !end_time.blank?
-      errors[:base] << 'The Start Date can not be in the past.' if end_time < start_at
+      errors[:base] << 'End time should not be lesser than start time' if end_time < start_time
     end
   end
 end
