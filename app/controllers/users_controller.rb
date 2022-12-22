@@ -45,7 +45,6 @@ class UsersController < ApplicationController
     if @user.save && !@user.errors.blank?
       @user.slot_times.create(slot_times_attributes)
     else
-      puts @user.errors
       return render json: 'Slots are already booked', status: :unprocessable_entity
     end
   end
