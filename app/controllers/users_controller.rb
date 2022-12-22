@@ -38,10 +38,15 @@ class UsersController < ApplicationController
     end
 
     @user = User.find_or_initialize_by(name: params[:name])
-    if @user.save
+    @slot_time = SlotTime.where(:start_time => Time.zone.now.change(hour: start_time_params[0].to_i)..Time.now.change(hour: end_time_params[0].to_i))
+    if !@slot_time.blank?
+      @user.errors.add(:base, 'Slots are already booked')
+    end
+    if @user.save && !@user.errors.blank?
       @user.slot_times.create(slot_times_attributes)
     else
-      render json: @user.errors, status: :unprocessable_entity
+      puts @user.errors
+      return render json: 'Slots are already booked', status: :unprocessable_entity
     end
   end
 
@@ -57,8 +62,8 @@ class UsersController < ApplicationController
     end
 
     def parse_time(start_time_params, end_time_params)
-      DateTime.now.change(hour: start_time_params[0].to_i,
-      min: start_time_params[1].to_i).to_i..DateTime.now.change(hour: end_time_params[0].to_i,
+      Time.now.change(hour: start_time_params[0].to_i,
+      min: start_time_params[1].to_i).to_i..Time.now.change(hour: end_time_params[0].to_i,
       min: end_time_params[1].to_i).to_i
     end
 
