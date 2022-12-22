@@ -36,11 +36,10 @@ class UsersController < ApplicationController
         end
       end
     end
-    @user.name = params[:name]
 
+    @user = User.find_or_initialize_by(name: params[:name])
     if @user.save
       @user.slot_times.create(slot_times_attributes)
-      render json: @user, include: ['slot_times']
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -49,7 +48,7 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:name])
+      @user = User.find_by_name(params[:name])
     end
 
     # Only allow a trusted parameter "white list" through.
